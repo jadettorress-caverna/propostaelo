@@ -70,7 +70,7 @@
   .destaque { color: var(--gold); font-weight: 500; white-space: nowrap; }
   .section-sub { font-size: 15px; color: var(--white-dim); max-width: 560px; margin: 0 auto 48px; }
   .sep { color: var(--accent); font-size: 14px; margin: 0 auto; display: block; text-align: center; }
-  .badge { display: inline-block; border: 1px solid var(--line); background: rgba(201,168,76,0.08); color: var(--gold); border-radius: 999px; padding: 8px 18px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; }
+  .badge { display: inline-block; color: var(--gold); padding: 0; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; }
 
   /* HERO */
   .hero { padding: 72px 0; }
@@ -156,8 +156,10 @@
   .ouvir-oficina { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; border: 0; background: none; padding: 0 0 0 8px; cursor: pointer; font: inherit; font-size: 12px; color: var(--white); }
   .ouvir-oficina .play { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border: 1.5px solid var(--gold); border-radius: 50%; color: var(--gold); font-size: 9px; padding-left: 2px; transition: background .2s, color .2s; }
   .ouvir-oficina:hover .play { background: var(--gold); color: #1A1406; }
+  .sep-ouvir { text-align: center; }
+  .sep-ouvir .ouvir { margin: 0; }
   .ouvir.convite { animation: convite 2.2s ease-in-out infinite; }
-  .ouvir.principal { display: flex; width: fit-content; margin: -14px auto 26px; padding: 10px 20px; font-size: 11px; background: rgba(232,128,95,0.14); }
+  .ouvir.principal { display: flex; width: fit-content; margin: -14px auto 40px; padding: 10px 20px; font-size: 11px; background: rgba(232,128,95,0.14); }
   .ouvir.principal.convite { animation: convite-forte 2.2s ease-in-out infinite; }
   @keyframes convite-forte { 0%, 100% { box-shadow: 0 0 6px rgba(232,128,95,0.25); } 50% { box-shadow: 0 0 0 6px rgba(232,128,95,0.18), 0 0 26px rgba(232,128,95,0.6); background-color: rgba(232,128,95,0.24); } }
   @keyframes convite { 0%, 100% { box-shadow: 0 0 0 0 rgba(232,128,95,0); } 50% { box-shadow: 0 0 0 5px rgba(232,128,95,0.12), 0 0 14px rgba(232,128,95,0.35); } }
@@ -978,8 +980,12 @@
       b.addEventListener('click', () => tocar(i));
       // O primeiro botão fica logo abaixo da logo do Método Elo, em destaque
       const marca = i === 0 && p.el.querySelector('.marca');
-      if (marca) { b.classList.add('principal'); marca.after(b); }
-      else p.el.insertBefore(b, p.el.firstElementChild);
+      if (marca) { b.classList.add('principal'); marca.after(b); return; }
+      // Nas outras seções, o botão entra no lugar da estrelinha que separa as seções
+      const ant = p.el.previousElementSibling;
+      if (ant && ant.classList.contains('sep')) {
+        const w = document.createElement('div'); w.className = 'sep-ouvir'; w.append(b); ant.replaceWith(w);
+      } else p.el.insertBefore(b, p.el.firstElementChild);
     });
 
     // Convite: os botões de ouvir pulsam de leve enquanto nenhum áudio toca

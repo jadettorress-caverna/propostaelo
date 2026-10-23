@@ -882,9 +882,9 @@
     const velocidades = [1, 1.25, 1.5];
     player.audio = audio;
 
+    // Só leva a tela até a seção; quem destaca o trecho é o raio dourado
     function marcar(el) {
-      document.querySelectorAll('.lendo').forEach(x => x.classList.remove('lendo'));
-      if (el) { el.classList.add('lendo'); el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+      if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
     }
     function parar() {
       const tinhaSetor = setorAberto; setorAberto = false;

@@ -157,6 +157,9 @@
   .ouvir-oficina .play { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border: 1.5px solid var(--gold); border-radius: 50%; color: var(--gold); font-size: 9px; padding-left: 2px; transition: background .2s, color .2s; }
   .ouvir-oficina:hover .play { background: var(--gold); color: #1A1406; }
   .ouvir.convite { animation: convite 2.2s ease-in-out infinite; }
+  .ouvir.principal { margin: -14px auto 30px; padding: 10px 20px; font-size: 11px; background: rgba(232,128,95,0.14); }
+  .ouvir.principal.convite { animation: convite-forte 2.2s ease-in-out infinite; }
+  @keyframes convite-forte { 0%, 100% { box-shadow: 0 0 6px rgba(232,128,95,0.25); } 50% { box-shadow: 0 0 0 6px rgba(232,128,95,0.18), 0 0 26px rgba(232,128,95,0.6); background-color: rgba(232,128,95,0.24); } }
   @keyframes convite { 0%, 100% { box-shadow: 0 0 0 0 rgba(232,128,95,0); } 50% { box-shadow: 0 0 0 5px rgba(232,128,95,0.12), 0 0 14px rgba(232,128,95,0.35); } }
   .ouvir:hover { background: rgba(232,128,95,0.18); }
   .lendo { outline: 2px solid rgba(201,168,76,0.6); outline-offset: 4px; border-radius: 6px; background-color: rgba(201,168,76,0.06); }
@@ -973,7 +976,10 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'ouvir'; b.textContent = '▶ Clique para ouvir esta seção';
       b.addEventListener('click', () => tocar(i));
-      p.el.insertBefore(b, p.el.firstElementChild);
+      // O primeiro botão fica logo abaixo da logo do Método Elo, em destaque
+      const marca = i === 0 && p.el.querySelector('.marca');
+      if (marca) { b.classList.add('principal'); marca.after(b); }
+      else p.el.insertBefore(b, p.el.firstElementChild);
     });
 
     // Convite: os botões de ouvir pulsam de leve enquanto nenhum áudio toca

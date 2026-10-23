@@ -156,6 +156,7 @@
   .ouvir { display: inline-flex; align-items: center; gap: 6px; margin: 0 auto 18px; padding: 7px 14px; border: 1px solid var(--accent); border-radius: 999px; background: rgba(232,128,95,0.08); color: var(--accent); font-family: var(--font-body); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; cursor: pointer; }
   .ouvir-oficina { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; border: 0; background: none; padding: 0 0 0 8px; cursor: pointer; font: inherit; font-size: 12px; color: var(--white); }
   .ouvir-oficina .play { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border: 1.5px solid var(--gold); border-radius: 50%; color: var(--gold); font-size: 9px; padding-left: 2px; transition: background .2s, color .2s; }
+  .ouvir-oficina.convite .play { animation: convite-forte 2.2s ease-in-out infinite; }
   .ouvir-oficina:hover .play { background: var(--gold); color: #1A1406; }
   .sep-ouvir { text-align: center; }
   .sep-ouvir .ouvir { margin: 0; }
@@ -585,10 +586,10 @@
     <p class="dif"><span>✦</span> “Queimei os barcos no offline <em>para construir a ponte no online.</em>”</p>
   </div>
 
-  <span class="sep" style="margin:72px auto">✦</span>
+  <div class="sep-ouvir" style="margin:72px auto"><button type="button" class="ouvir" id="ouvir-investimento">▶ Clique para ouvir esta seção</button></div>
 
   <p class="section-label">Investimento</p>
-  <h2 class="section-title">Proposta de Gestão · <em class="gold-italic">Projeto Elo</em></h2>
+  <h2 class="section-title" id="titulo-investimento">Proposta de Gestão · <em class="gold-italic">Projeto Elo</em></h2>
   <p class="section-sub">De novembro de 2026 a julho de 2027: estruturação e 6 meses de gestão.</p>
 
   <div class="card price-card">
@@ -877,7 +878,7 @@
       ['#cta', '9-tudo-claro']
     ].map(([sel, arq]) => ({ el: document.querySelector(sel), arq }));
     // Troque a versão sempre que algum áudio for editado, para o navegador não tocar a cópia antiga
-    const VERSAO = '?v=20261023-8';
+    const VERSAO = '?v=20261023-9';
     const audio = new Audio();
     audio.preload = 'auto';
     const proximo = new Audio(); proximo.preload = 'auto';
@@ -890,6 +891,7 @@
       if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
     }
     function parar() {
+      avulso = null;
       const tinhaSetor = setorAberto; setorAberto = false;
       if (tinhaSetor && bg.classList.contains('open')) fecharJanela();
       audio.pause(); audio.removeAttribute('src'); pos = -1; marcar(null); brilhar(null);
@@ -912,6 +914,7 @@
     function proxima() {
       if (avancou) return; avancou = true;
       if (setorAberto) { setorAberto = false; audio.pause(); player.classList.remove('on'); return; }  // áudio de uma oficina: toca só ele e deixa a janelinha aberta
+      if (avulso) { const a = avulso; avulso = null; audio.pause(); player.classList.remove('on'); brilhar(null); if (a === '10-investimento') convidarOficinas(); return; }
       if (pos >= 0) tocar(pos + 1);
     }
     audio.addEventListener('ended', proxima);
@@ -921,13 +924,30 @@
     });
     audio.addEventListener('playing', () => { avancou = false; });
 
+    // Na proposta de valor: o áudio do investimento toca sozinho (não segue para outro)
+    let avulso = null;
+    document.getElementById('ouvir-investimento').addEventListener('click', () => {
+      if (pos >= 0 || setorAberto || avulso) parar();
+      avulso = '10-investimento'; avancou = false; pos = -1;
+      audio.src = 'audios/10-investimento.mp3' + VERSAO;
+      audio.playbackRate = vel;
+      audio.play().catch(() => {});
+      player.classList.add('on'); btPausa.textContent = '⏸ Pausar';
+    });
+    // Depois do áudio do investimento, os botões das oficinas pulsam de leve até ela tocar em algum
+    function convidarOficinas() {
+      document.querySelectorAll('.ouvir-oficina').forEach(b => b.classList.add('convite'));
+    }
+    document.querySelectorAll('.ouvir-oficina').forEach(b => b.addEventListener('click', () =>
+      document.querySelectorAll('.ouvir-oficina').forEach(x => x.classList.remove('convite'))));
+
     // Na proposta de valor: o botão de cada oficina abre a janelinha dela já tocando o áudio
     let setorAberto = false;
     const fecharJanela = fechar;
     fechar = function () { fecharJanela(); if (setorAberto) parar(); };
     document.querySelectorAll('[data-ouvir-setor]').forEach(b => b.addEventListener('click', () => {
       const [chave, arq] = b.dataset.ouvirSetor.split(':');
-      if (pos >= 0 || setorAberto) parar();
+      if (pos >= 0 || setorAberto || avulso) parar();
       abrir(chave, b);
       setorAberto = true; avancou = false; pos = -1;
       audio.src = 'audios/' + arq + '.mp3' + VERSAO;
@@ -948,6 +968,12 @@
       '5-estruturacao': [[0, '.fase1 .section-title'], [11.1, '.fase1 .section-sub'], [31.8, '.fase1 .step:nth-child(1)'], [38.0, '.fase1 .step:nth-child(2)'], [43.8, '.fase1 .step:nth-child(3)'], [50.9, '.fase1 .step:nth-child(4)'], [59.4, '.fase1 .result']],
       '6-gestao':       [[0, '.fase2 .section-title'], [12.9, '.fase2 .section-sub'], [23.4, '.rotina .card:nth-child(1)'], [39.9, '.rotina .card:nth-child(2)'], [61.6, '.rotina .card:nth-child(3)']],
       '7-equipe':       [[0, '#equipe .section-title'], [5.5, '.person.jade'], [10.5, '[data-modal="p-helen"]'], [12.9, '[data-modal="p-fabi"]'], [15.7, '#equipe .row3'], [21.0, '#equipe .base']],
+      '10-investimento': [[0, '#titulo-investimento'],
+                          [13.4, '.ouvir-oficina[data-ouvir-setor^="funil"]'], [13.9, '.ouvir-oficina[data-ouvir-setor^="produto"]'], [14.4, '.ouvir-oficina[data-ouvir-setor^="comercial"]'], [14.9, '.ouvir-oficina[data-ouvir-setor^="editorial"]'],
+                          [15.4, '.ouvir-oficina[data-ouvir-setor^="funil"]'], [15.9, '.ouvir-oficina[data-ouvir-setor^="produto"]'], [16.4, '.ouvir-oficina[data-ouvir-setor^="comercial"]'], [16.9, '.ouvir-oficina[data-ouvir-setor^="editorial"]'],
+                          [17.4, '#titulo-investimento'], [24.4, '.total'], [57.0, '.pagamento'], [67.1, '.total .validade'],
+                          [79.7, '.fora'], [81.6, '.fora li:nth-child(1)'], [87.6, '.fora li:nth-child(2)'], [95.0, '.fora li:nth-child(3)'], [107.5, '.fora li:nth-child(4)'],
+                          [118.8, '.price-card .price-head'], [130.0, '.actions .btn']],
       '9-tudo-claro':   [[0, '#cta .section-title'], [11.0, '#cta .section-sub'], [15.4, null]],
       '8-recebem':      [[0, '#produtos .section-title'], [8.4, '#produtos .section-sub'], [19.4, '#produtos .section-sub + .section-sub'], [24.5, '[data-produto="oficinas"]'], [32.0, '[data-produto="jade-responde"]'], [36.1, '[data-produto="dourada"]'], [51.1, '[data-produto="cubo"]']]
     };
@@ -962,7 +988,8 @@
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
     audio.addEventListener('timeupdate', () => {
-      const r = pos >= 0 && raios[partes[pos].arq];
+      const arqAtual = pos >= 0 ? partes[pos].arq : avulso;
+      const r = arqAtual && raios[arqAtual];
       if (!r) { if (raioAtual) brilhar(null); return; }
       let sel = null;
       // pequeno atraso para o raio chegar junto com a palavra, e não antes dela

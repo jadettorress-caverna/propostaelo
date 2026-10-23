@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Proposta de Gestão · Projeto Elo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #0A0A08;
+    --bg-2: #111108;
+    --bg-card: #1A1A12;
+    --bg-card-dark: #222218;
+    --bg-fase1: #14120A;
+    --bg-fase2: #0E0F0C;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dark: #8B6914;
+    --white: #F5F0E8;
+    --white-dim: rgba(245,240,232,0.65);
+    --line: rgba(201,168,76,0.28);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Montserrat', sans-serif;
+    --card-radius: 14px;
+    --accent: var(--gold);
+  }
+  /* Versão Fabi: fundo verde-petróleo e toques de coral (cores do perfil dela) */
+  [data-tema="fabi"] {
+    --bg-base: #0F3534;
+    --bg-2: #123B3A;
+    --bg-card: #164442;
+    --bg-card-dark: #1A4C4A;
+    --bg-fase1: #1A5250;
+    --bg-fase2: #0C2D2C;
+    --accent: #E8805F;
+  }
+  body { transition: background .4s; }
+
+  .tema { position: fixed; top: 14px; right: 14px; z-index: 40; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(10,10,8,0.7); border: 1px solid var(--line); backdrop-filter: blur(6px); }
+  .tema button { border: 0; background: transparent; color: var(--white-dim); font-family: var(--font-body); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; padding: 8px 12px; border-radius: 999px; cursor: pointer; }
+  .tema button.on { background: var(--gold); color: #1A1406; }
+  .tela-bg { position: fixed; inset: 0; z-index: 60; background: rgba(5,5,4,0.85); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 16px; }
+  .tela-bg.open { display: flex; }
+  .tela-moldura { max-width: 100%; height: min(844px, calc(100vh - 80px)); padding: 12px; border-radius: 36px; background: #111; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+  .tela-moldura iframe { display: block; max-width: 100%; height: 100%; border: 0; border-radius: 26px; background: var(--bg-base); }
+  .tela-fechar { border: 1px solid var(--gold); background: transparent; color: var(--gold); font-family: var(--font-body); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; }
+  .tema .t-lbl { align-self: center; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); padding: 0 6px 0 10px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-base);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding-left: 20px; padding-right: 20px; }
+  section { padding: 72px 0; text-align: center; }
+
+  .logo { font-family: var(--font-display); font-weight: 300; letter-spacing: 6px; font-size: 12px; text-transform: uppercase; color: var(--white-dim); }
+  .section-label { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 500; }
+  .section-title { font-family: var(--font-display); font-size: clamp(32px, 5vw, 52px); font-weight: 300; line-height: 1.15; margin-bottom: 20px; }
+  .gold-italic { font-style: italic; color: var(--gold); }
+  .ouro-t { color: var(--gold); }
+  .obs-b { font-style: italic; color: var(--white); }
+  .destaque { color: var(--gold); font-weight: 500; white-space: nowrap; }
+  .section-sub { font-size: 15px; color: var(--white-dim); max-width: 560px; margin: 0 auto 48px; }
+  .sep { color: var(--accent); font-size: 14px; margin: 0 auto; display: block; text-align: center; }
+  .badge { display: inline-block; border: 1px solid var(--line); background: rgba(201,168,76,0.08); color: var(--gold); border-radius: 999px; padding: 8px 18px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; }
+
+  /* HERO */
+  .hero { padding: 72px 0; }
+  .hero .logo { margin-bottom: 48px; }
+  .hero h1 { font-family: var(--font-display); font-weight: 300; font-size: clamp(34px, 6.4vw, 62px); line-height: 1.05; margin: 28px 0 24px; }
+  .hero .para { font-family: var(--font-display); font-style: italic; color: var(--gold-light); font-size: 20px; margin-bottom: 28px; }
+  .hero .marca { display: block; width: 150px; margin: 40px auto 36px; filter: drop-shadow(0 0 22px rgba(201,168,76,0.28)); animation: surge 1.4s ease both; }
+  @keyframes surge { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+  .tit { display: none; }
+  [data-tit="a"] .tit[data-tit="a"], [data-tit="b"] .tit[data-tit="b"] { display: inline; }
+  .tit-teste { margin: 0 auto 24px; }
+  .hero p.lead { color: var(--white-dim); max-width: 580px; margin: 0 auto; font-size: 16px; }
+
+  /* DIFERENÇA */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; }
+  .compare .card { padding: 28px; }
+  .compare h3 { font-family: var(--font-display); font-size: 24px; font-weight: 600; margin-bottom: 14px; }
+  .compare ul { list-style: none; color: var(--white-dim); font-size: 14px; }
+  .compare li { padding: 7px 0; border-top: 1px solid rgba(245,240,232,0.06); }
+  .compare li:first-child { border-top: 0; }
+  .compare .nosso { border-color: rgba(201,168,76,0.5); background: linear-gradient(180deg, rgba(201,168,76,0.07), var(--bg-card)); }
+  .compare .nosso h3 { color: var(--gold); }
+  .compare .nosso li::before { content: "✦ "; color: var(--accent); font-size: 10px; }
+  .compare .agencia li::before { content: "— "; color: rgba(245,240,232,0.3); }
+
+  .card { background: var(--bg-card); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--card-radius); }
+
+  /* ORGANOGRAMA DO NEGÓCIO */
+  .org { position: relative; max-width: 720px; margin: 0 auto; }
+  .brain { display: inline-flex; align-items: center; gap: 12px; padding: 10px 24px; border: 1px solid var(--gold); border-radius: 999px; background: var(--bg-card); cursor: pointer; font: inherit; color: var(--white); transition: border-color .2s, box-shadow .2s; }
+  .brain:hover, .brain:focus-visible { box-shadow: 0 0 24px rgba(201,168,76,0.18); outline: none; }
+  .brain .t { font-family: var(--font-display); font-size: 22px; font-weight: 600; line-height: 1; }
+  .brain .s { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  .brain .d { width: 18px; height: 1px; background: var(--line); }
+  .trunk { width: 1px; height: 36px; background: var(--line); margin: 0 auto; }
+  .branch { height: 1px; background: var(--line); margin: 0 12.5%; }
+  .sectors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .sector { position: relative; padding: 26px 14px 22px; cursor: pointer; transition: transform .2s, border-color .2s; text-align: center; font: inherit; color: inherit; }
+  .sector::before { content: ""; position: absolute; top: -37px; left: 50%; width: 1px; height: 37px; background: var(--line); }
+  .sector:hover, .sector:focus-visible { transform: translateY(-4px); border-color: rgba(201,168,76,0.55); outline: none; }
+  .sector .num { font-family: var(--font-display); font-size: 13px; color: var(--accent); letter-spacing: 0.15em; }
+  .sector .name { font-family: var(--font-display); font-size: 22px; font-weight: 600; line-height: 1.15; margin: 6px 0 8px; }
+  .sector .hint { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(201,168,76,0.6); }
+  /* Selo do Funil: faixa na diagonal, no canto superior direito */
+  .sector.especial { border-color: rgba(201,168,76,0.5); }
+  .selo-box { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+  .selo { position: absolute; top: 15px; right: -32px; width: 116px; transform: rotate(45deg); background: var(--accent); color: #1A1406; font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; padding: 4px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .trofeu { display: none; position: absolute; top: -14px; right: -12px; width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(180deg, var(--gold-light), var(--gold)); color: #1A1406; align-items: center; justify-content: center; box-shadow: 0 0 0 3px var(--bg-base), 0 0 18px rgba(201,168,76,0.45); }
+  .trofeu svg { width: 20px; height: 20px; }
+  [data-selo="trofeu"] .trofeu { display: flex; }
+  [data-selo="trofeu"] .selo-box { display: none; }
+  .selo-teste { margin-top: 14px; display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; border: 1px dashed rgba(201,168,76,0.4); }
+  .selo-teste span { align-self: center; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); padding: 0 6px 0 10px; }
+  .selo-teste button { border: 0; background: transparent; color: var(--white-dim); font-family: var(--font-body); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+  .selo-teste button.on { background: var(--gold); color: #1A1406; }
+  /* Recortes de jornal */
+  .recortes { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 8px 6px; }
+  .recorte { display: flex; flex-direction: column; text-align: left; text-decoration: none; background: #F3EBDC; color: #2A2620; padding: 26px 24px 20px; border-radius: 2px; box-shadow: 0 14px 30px rgba(0,0,0,0.35); font-family: Georgia, 'Times New Roman', serif; transition: transform .25s; clip-path: polygon(0 2%, 6% 0, 14% 1.5%, 24% 0, 36% 1.2%, 48% 0, 60% 1.6%, 72% 0, 84% 1.3%, 94% 0, 100% 1.8%, 99.2% 50%, 100% 98%, 90% 100%, 78% 98.6%, 64% 100%, 52% 98.4%, 38% 100%, 26% 98.6%, 12% 100%, 0 98.4%, 0.8% 50%); }
+  .recorte.r1 { transform: rotate(-1.5deg); }
+  .recorte.r2 { transform: rotate(1.2deg); }
+  .recorte:hover { transform: rotate(0) translateY(-4px); }
+  .recorte .veiculo { font-family: var(--font-body); font-weight: 800; letter-spacing: 0.22em; font-size: 12px; border-bottom: 2px solid #2A2620; padding-bottom: 6px; }
+  .recorte .data { font-family: var(--font-body); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #7A7064; margin: 6px 0 12px; }
+  .recorte .manchete { font-size: 21px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+  .recorte .citacao { font-style: italic; font-size: 17px; line-height: 1.45; padding-left: 12px; border-left: 3px solid var(--accent); margin-bottom: 14px; }
+  .recorte .autor { font-family: var(--font-body); font-size: 11px; color: #7A7064; margin-top: auto; }
+  @media (max-width: 640px) { .recortes { grid-template-columns: 1fr; } }
+  /* Produtos dentro da parceria */
+  .dourada-banner { display: block; width: 100%; border-radius: var(--card-radius); border: 1px solid rgba(201,168,76,0.35); margin: 8px 0 28px; }
+  .produtos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; text-align: left; }
+  .produto { margin: 0; border-radius: 12px; transition: transform .3s; }
+  .produto.brilha { transform: scale(1.03); }
+  .produto.brilha img { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold), 0 0 28px rgba(232,201,106,0.55); animation: brilho 1.6s ease-in-out infinite; }
+  @keyframes brilho { 50% { box-shadow: 0 0 0 2px var(--gold-light), 0 0 40px rgba(232,201,106,0.8); } }
+  .produto img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 10px; border: 1px solid rgba(201,168,76,0.3); }
+  .produto figcaption { font-size: 12px; color: var(--white-dim); margin-top: 10px; line-height: 1.5; }
+  .produto figcaption b { display: block; font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+  @media (max-width: 640px) { .produtos { grid-template-columns: 1fr 1fr; } }
+  /* Leitura em voz alta */
+  .ouvir { display: inline-flex; align-items: center; gap: 6px; margin: 0 auto 18px; padding: 7px 14px; border: 1px solid var(--accent); border-radius: 999px; background: rgba(232,128,95,0.08); color: var(--accent); font-family: var(--font-body); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; cursor: pointer; }
+  .ouvir-oficina { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; border: 0; background: none; padding: 0 0 0 8px; cursor: pointer; font: inherit; font-size: 12px; color: var(--white); }
+  .ouvir-oficina .play { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border: 1.5px solid var(--gold); border-radius: 50%; color: var(--gold); font-size: 9px; padding-left: 2px; transition: background .2s, color .2s; }
+  .ouvir-oficina:hover .play { background: var(--gold); color: #1A1406; }
+  .ouvir:hover { background: rgba(232,128,95,0.18); }
+  .lendo { outline: 2px solid rgba(201,168,76,0.6); outline-offset: 4px; border-radius: 6px; background-color: rgba(201,168,76,0.06); }
+  .player { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 55; display: none; align-items: center; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(10,10,8,0.85); border: 1px solid var(--gold); backdrop-filter: blur(6px); }
+  .player.on { display: flex; }
+  .player span { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); padding: 0 8px 0 12px; }
+  .player button { border: 0; background: transparent; color: var(--white); font-family: var(--font-body); font-size: 11px; font-weight: 600; padding: 8px 12px; border-radius: 999px; cursor: pointer; }
+  .player button:hover { background: rgba(201,168,76,0.15); }
+  /* Funil da Jade: passos lado a lado no computador, um embaixo do outro no celular */
+  .funil-jade { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .fj-passo { position: relative; flex: 1 1 0; min-width: 0; padding: 22px 14px 18px; border: 1px solid rgba(201,168,76,0.35); border-radius: var(--card-radius); background: var(--bg-card); display: flex; flex-direction: column; gap: 4px; }
+  .fj-passo b { font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1.15; }
+  .fj-passo span { font-size: 12px; color: var(--white-dim); }
+  .fj-n { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: #1A1406 !important; font-size: 12px !important; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .fj-seta { flex: none; width: 18px; height: 18px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); transform: rotate(45deg); opacity: .8; }
+  .fj-caminhos { flex: 1.2 1 0; display: flex; flex-direction: column; gap: 6px; }
+  .fj-fim { border-color: var(--accent); }
+  .fj-ou { font-family: var(--font-display); font-style: italic; color: var(--accent); font-size: 15px; }
+  @media (max-width: 760px) {
+    .funil-jade { flex-direction: column; }
+    .fj-passo, .fj-caminhos { width: 100%; max-width: 360px; }
+    .fj-seta { transform: rotate(135deg); margin: 4px 0 18px; }
+  }
+  .kit-box { position: relative; margin-top: 18px; padding: 20px 18px 16px; border-radius: 12px; border: 1px solid var(--accent); background: rgba(232,128,95,0.08); }
+  .kit-box h6 { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+  .kit-box .kit-nota { font-size: 12px; font-style: italic; color: var(--gold); margin: -2px 0 10px; }
+  .kit-box p { font-size: 13px; color: var(--white-dim); margin-bottom: 8px; }
+  .kit-box li::before { color: var(--accent); }
+  .kit-selo { position: absolute; top: -12px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(180deg, var(--gold-light), var(--gold)); color: #1A1406; font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 11px 4px 8px; border-radius: 999px; }
+  .kit-selo svg { width: 14px; height: 14px; }
+  .modal .nota { display: block; margin-top: 4px; font-size: 12px; font-style: italic; font-weight: 300; color: var(--white); }
+  .modal .oficina-box { padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(201,168,76,0.35); background: rgba(201,168,76,0.06); font-size: 14px; color: var(--white); margin-bottom: 4px; }
+  .tap { margin-top: 28px; font-size: 12px; color: var(--white-dim); }
+
+  /* FASES */
+  .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; text-align: left; }
+  .step { padding: 24px 20px; position: relative; overflow: hidden; }
+  .step .ghost { position: absolute; right: 10px; top: -6px; font-family: var(--font-display); font-size: 84px; color: rgba(201,168,76,0.08); line-height: 1; }
+  .step .when { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .step h4 { font-family: var(--font-display); font-size: 21px; font-weight: 600; margin: 8px 0 8px; }
+  .step p { font-size: 13px; color: var(--white-dim); }
+  .result { margin-top: 36px; padding: 26px 28px; text-align: left; display: flex; gap: 18px; align-items: flex-start; }
+  .result .ic { color: var(--accent); font-size: 22px; line-height: 1; }
+  .result strong { font-weight: 600; color: var(--white); }
+  .result p { font-size: 14px; color: var(--white-dim); }
+
+  .rotina { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; text-align: left; margin-bottom: 72px; }
+  .rotina .card { padding: 24px 20px; }
+  .rotina h4 { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .rotina p { font-size: 13px; color: var(--white-dim); }
+  .rotina .tag { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 8px; }
+
+  /* ORGANOGRAMA DA EQUIPE */
+  .team { max-width: 760px; margin: 0 auto; }
+  .person { position: relative; display: flex; align-items: center; gap: 14px; text-align: left; }
+  .person .av { flex: none; width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: var(--bg-card-dark); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 24px; color: var(--gold); }
+  .person .av.vaga { border-style: dashed; border-color: rgba(201,168,76,0.55); }
+  .person { padding: 14px 16px; cursor: pointer; transition: transform .2s, border-color .2s; font: inherit; color: inherit; width: 100%; }
+  .person:hover, .person:focus-visible { transform: translateY(-3px); border-color: rgba(201,168,76,0.55); outline: none; }
+  .person .role { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .person .who { font-family: var(--font-display); font-size: 21px; font-weight: 600; margin-top: 4px; line-height: 1.2; }
+  .person.jade { max-width: 300px; margin: 0 auto; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 560px; margin: 0 auto; }
+  .row3 { display: grid; grid-template-columns: 1fr; gap: 14px; max-width: 280px; margin: 0 auto; }
+  .grupo.lideres { padding: 30px 20px 24px; border: 1px solid rgba(201,168,76,0.25); border-radius: 20px; background: rgba(201,168,76,0.03); }
+  .grupo-lbl { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 14px; }
+  /* Setinha dourada: indica que o bloco abre uma janelinha */
+  .sector::after, .person::after { content: ""; position: absolute; right: 10px; bottom: 9px; width: 13px; height: 17px; background: var(--gold); -webkit-mask: var(--cursor) no-repeat center / contain; mask: var(--cursor) no-repeat center / contain; opacity: .7; transition: transform .2s, opacity .2s; }
+  .sector:hover::after, .person:hover::after { opacity: 1; transform: translate(-3px, -3px); }
+  :root { --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 17'%3E%3Cpath d='M1 1v13.5l3.3-3.2 2.4 5.2 2.2-1-2.4-5.1H11z' fill='black'/%3E%3C/svg%3E"); }
+  .base { margin-top: 28px; padding: 16px; border: 1px dashed rgba(201,168,76,0.4); border-radius: var(--card-radius); font-size: 13px; color: var(--white-dim); }
+  .base strong { color: var(--gold); font-weight: 600; }
+
+  /* CTA + PROPOSTA */
+  .btn { display: inline-block; background: linear-gradient(180deg, var(--gold-light), var(--gold)); color: #1A1406; border: 0; border-radius: 999px; padding: 18px 34px; font-family: var(--font-body); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+  .btn.chamando { animation: chamar 1.3s ease-in-out infinite; }
+  @keyframes chamar { 0%, 100% { box-shadow: 0 0 0 0 rgba(232,201,106,0.7); } 50% { box-shadow: 0 0 0 10px rgba(232,201,106,0), 0 0 30px rgba(232,201,106,0.6); } }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,76,0.25); }
+  .btn.ghost { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+  #proposta { display: none; }
+  #proposta.open { display: block; animation: fade .5s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .bio { display: flex; align-items: center; gap: 24px; padding: 26px 28px; text-align: left; margin-bottom: 14px; }
+  .bio-foto { flex: none; width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(201,168,76,0.2); }
+  .bio-txt h3 { font-family: var(--font-display); font-size: 30px; font-weight: 600; line-height: 1.1; }
+  .bio-sub { font-family: var(--font-display); font-style: italic; color: var(--gold); font-size: 17px; margin-bottom: 10px; }
+  .bio-txt p:last-child { font-size: 14px; color: var(--white-dim); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+  .stat { padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .stat b { font-family: var(--font-display); font-size: 32px; font-weight: 600; color: var(--gold-light); line-height: 1.1; }
+  .stat span { font-size: 12px; color: var(--white-dim); }
+  .bio-hoje { padding: 26px 28px; text-align: left; }
+  .bio-hoje p { font-size: 14px; color: var(--white-dim); margin-bottom: 10px; }
+  .bio-hoje .ouro { color: var(--gold); }
+  .bio-hoje strong { color: var(--white); font-weight: 600; }
+  .bio-hoje .dif { margin: 18px 0 0; padding-top: 16px; border-top: 1px solid rgba(201,168,76,0.2); font-family: var(--font-display); font-size: 22px; color: var(--white); }
+  .bio-hoje .dif span { color: var(--accent); font-size: 14px; margin-right: 6px; }
+  .bio-hoje .dif em { color: var(--gold); }
+  @media (max-width: 760px) { .stats { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .bio { flex-direction: column; text-align: center; } }
+  .price-card { text-align: left; padding: 32px; margin-bottom: 16px; }
+  .price-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid rgba(201,168,76,0.2); padding-bottom: 16px; margin-bottom: 16px; }
+  .price-head h3 { font-family: var(--font-display); font-size: 26px; font-weight: 600; }
+  .price-head .meta { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .price { font-family: var(--font-display); font-size: 40px; color: var(--gold-light); font-weight: 600; white-space: nowrap; }
+  .price-card ul { list-style: none; font-size: 14px; color: var(--white-dim); }
+  .price-card li { padding: 6px 0 6px 20px; position: relative; }
+  .price-card li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: 10px; top: 10px; }
+  .total { text-align: center; padding: 36px 24px; margin: 28px 0; border: 1px solid var(--gold); background: radial-gradient(circle at 50% 0%, rgba(201,168,76,0.14), var(--bg-card)); }
+  .total .lbl { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .total .val { font-family: var(--font-display); font-size: clamp(48px, 9vw, 72px); font-weight: 600; color: var(--white); line-height: 1.1; margin: 8px 0; }
+  .total p { font-size: 13px; color: var(--white-dim); }
+  .pagamento { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 18px 0 4px; text-align: left; }
+  .pagamento div { padding: 12px 14px; border: 1px solid rgba(201,168,76,0.3); border-radius: 10px; font-size: 13px; color: var(--white-dim); }
+  .pagamento b { display: block; font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+  @media (max-width: 640px) { .pagamento { grid-template-columns: 1fr; } }
+  .total .validade { margin-top: 14px; display: inline-block; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--accent); color: var(--white); font-size: 12px; font-weight: 500; }
+  .fora { text-align: left; padding: 26px 28px; }
+  .fora h4 { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+  .fora ul { list-style: none; font-size: 13px; color: var(--white-dim); }
+  .fora li { padding: 5px 0; }
+  .price-card .obs, .fora .obs { font-size: 12px; font-style: italic; color: var(--white); }
+  .fora li::before { content: "— "; color: rgba(201,168,76,0.6); }
+  .actions { margin-top: 36px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  footer { padding: 56px 0 64px; text-align: center; color: var(--white-dim); font-size: 12px; border-top: 1px solid rgba(201,168,76,0.1); }
+  footer .logo { margin-bottom: 10px; }
+
+  /* MODAL */
+  .modal-bg { position: fixed; inset: 0; background: rgba(5,5,4,0.78); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--bg-card-dark); border: 1px solid rgba(201,168,76,0.45); border-radius: 18px; max-width: 560px; width: 100%; max-height: 88vh; overflow: auto; padding: 34px 30px 30px; text-align: left; position: relative; animation: fade .3s ease; }
+  .modal .x { position: absolute; top: 12px; right: 14px; background: none; border: 0; color: var(--white-dim); font-size: 26px; cursor: pointer; line-height: 1; }
+  .modal .m-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .modal h3 { font-family: var(--font-display); font-size: 32px; font-weight: 600; margin: 6px 0 4px; line-height: 1.15; }
+  .modal .m-sub { font-family: var(--font-display); font-style: italic; color: var(--gold); font-size: 18px; margin-bottom: 18px; }
+  .modal h5 { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin: 18px 0 8px; }
+  .modal ul { list-style: none; font-size: 14px; color: var(--white-dim); }
+  .modal li { padding: 5px 0 5px 18px; position: relative; }
+  .modal li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: 9px; top: 9px; }
+  .modal .claude-box { margin-top: 18px; padding: 16px 18px; border-radius: 12px; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); font-size: 14px; color: var(--white); }
+  .modal .claude-box b { color: var(--gold); font-weight: 600; }
+
+  @media (max-width: 760px) {
+    section { padding: 56px 0; }
+    .compare, .rotina { grid-template-columns: 1fr; }
+    .sectors, .timeline { grid-template-columns: 1fr 1fr; }
+    .branch { display: none; }
+    .sector::before { display: none; }
+    .trunk.t2 { display: none; }
+  }
+  @media (max-width: 420px) {
+    .timeline { grid-template-columns: 1fr; }
+    .row2, .row3 { grid-template-columns: 1fr; }
+    .price { font-size: 34px; }
+  }
+
+  /* PDF: imprime só a proposta */
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body > *:not(#proposta):not(.print-head) { display: none !important; }
+    .print-head { display: block !important; text-align: center; padding: 10px 0 24px; }
+    #proposta { display: block !important; padding: 0; }
+    .actions, .modal-bg, .tema, .tela-bg, .ouvir, .ouvir-oficina, .player { display: none !important; }
+    .price-card, .total, .fora { break-inside: avoid; }
+  }
+  .print-head { display: none; }
+  /* Versão publicada: os botões de teste ficam escondidos */
+  .tema, .selo-teste, .tit-teste { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Botão de teste: ver a página no tamanho de celular ou tablet (sai antes de enviar) -->
+<div class="tema" role="group" aria-label="Ver em outro tamanho">
+  <span class="t-lbl">Teste</span>
+  <button type="button" data-tela="390">Celular</button>
+  <button type="button" data-tela="820">Tablet</button>
+</div>
+<div class="tela-bg" id="tela-bg" aria-hidden="true">
+  <div class="tela-moldura" id="tela-moldura"><iframe id="tela-frame" title="Pré-visualização"></iframe></div>
+  <button type="button" class="tela-fechar" id="tela-fechar">Fechar ✕</button>
+</div>
+
+<div class="print-head">
+  <p class="logo">Caverna das Guerreiras</p>
+  <p class="section-title" style="font-size:34px;margin:14px 0 4px">Proposta de Gestão · <em class="gold-italic">Projeto Elo</em></p>
+  <p style="color:var(--white-dim);font-size:13px">Para Fabiana Ribas e Helen Varoto · por Jade Torres</p>
+</div>
+
+<!-- HERO -->
+<header class="hero wrap" style="text-align:center">
+  <p class="logo">Caverna das Guerreiras</p>
+  <span class="badge">✦ Proposta Jade Torres · Projeto Elo ✦</span>
+  <img class="marca" src="fotos/logo-elo.png" alt="Método Elo">
+  <h1><span class="tit" data-tit="a">O olhar de quem criou o negócio<br>é <em class="gold-italic">insubstituível</em>.</span><span class="tit" data-tit="b">Nenhum olhar supera<br>o de <em class="gold-italic">quem criou o negócio</em>.</span></h1>
+  <!-- Botão de teste do título (sai antes de enviar) -->
+  <div class="selo-teste tit-teste" role="group" aria-label="Título"><span>Teste do título</span><button type="button" data-tit="a">Insubstituível</button><button type="button" data-tit="b">Nenhum olhar supera</button></div>
+  <p class="para">Para Fabiana Ribas e Helen Varoto</p>
+  <p class="lead">Vocês já têm o método, a Masterclass gravada e 11 alunas. Falta o sistema que faz o negócio girar todo mês, sem depender de agência e sem vocês se sentirem sozinhas.</p>
+</header>
+
+<span class="sep">✦</span>
+
+<!-- A DIFERENÇA -->
+<section class="wrap" id="diferenca">
+  <p class="section-label">A diferença</p>
+  <h2 class="section-title">Não é agência. <em class="gold-italic">É construção.</em></h2>
+  <p class="section-sub">A agência faz por vocês e precisa que vocês renovem. Aqui a gente constrói junto, e no final a chave fica com vocês.</p>
+  <div class="compare">
+    <div class="card agencia">
+      <h3>Agência</h3>
+      <ul>
+        <li>Faz por vocês, sem ensinar</li>
+        <li>Relatórios de métricas difíceis de entender</li>
+        <li>Quem vende não é quem entrega</li>
+        <li>Quando sai, leva o conhecimento junto</li>
+        <li>Costuma cobrar um percentual das vendas</li>
+      </ul>
+    </div>
+    <div class="card nosso">
+      <h3>Gestão com a Jade</h3>
+      <ul>
+        <li>Constrói com vocês, em oficinas</li>
+        <li>Organiza todo o sistema com a IA do Claude e simplifica a gestão</li>
+        <li>Equipe própria, contratada por vocês</li>
+        <li>Quando termina, o sistema continua de vocês</li>
+        <li>Sem participação nas vendas de vocês</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<span class="sep">✦</span>
+
+<!-- ORGANOGRAMA DO NEGÓCIO -->
+<section class="wrap" id="estrutura">
+  <p class="section-label">A estrutura</p>
+  <h2 class="section-title">Como o projeto Elo <em class="gold-italic">vai funcionar</em></h2>
+  <p class="section-sub">Quatro setores caminhando juntos, em harmonia e com um só objetivo: firmar um sistema de vendas com <span class="destaque">faturamento previsível</span> e uma <span class="destaque">entrega escalonável</span>.</p>
+
+  <div class="org">
+    <button class="brain" data-modal="claude" type="button">
+      <span class="d"></span><span class="s">Setores do projeto</span><span class="d"></span><span class="t">Sistema Elo</span><span class="d"></span>
+    </button>
+    <div class="trunk"></div>
+    <div class="branch"></div>
+    <div class="trunk t2" style="height:0"></div>
+    <div class="sectors" style="margin-top:36px">
+      <button class="card sector especial" data-modal="funil" type="button"><span class="selo-box"><span class="selo">✦ Prompts</span></span><span class="trofeu" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a2 2 0 0 0 0 .5A3.5 3.5 0 0 0 8.5 10"/><path d="M16 6h3a2 2 0 0 1 0 .5A3.5 3.5 0 0 1 15.5 10"/><path d="M12 13v4"/><path d="M8.5 20h7l-1-3h-5z"/></svg></span><div class="num">01</div><div class="name">Funil de vendas</div><div class="hint">Ver oficina</div></button>
+      <button class="card sector especial" data-modal="produto" type="button"><span class="selo-box"><span class="selo">✦ Prompts</span></span><span class="trofeu" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a2 2 0 0 0 0 .5A3.5 3.5 0 0 0 8.5 10"/><path d="M16 6h3a2 2 0 0 1 0 .5A3.5 3.5 0 0 1 15.5 10"/><path d="M12 13v4"/><path d="M8.5 20h7l-1-3h-5z"/></svg></span><div class="num">02</div><div class="name">Produto e Oferta</div><div class="hint">Ver oficina</div></button>
+      <button class="card sector especial" data-modal="comercial" type="button"><span class="selo-box"><span class="selo">✦ Prompts</span></span><span class="trofeu" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a2 2 0 0 0 0 .5A3.5 3.5 0 0 0 8.5 10"/><path d="M16 6h3a2 2 0 0 1 0 .5A3.5 3.5 0 0 1 15.5 10"/><path d="M12 13v4"/><path d="M8.5 20h7l-1-3h-5z"/></svg></span><div class="num">03</div><div class="name">Comercial e Onboarding</div><div class="hint">Ver oficina</div></button>
+      <button class="card sector especial" data-modal="editorial" type="button"><span class="selo-box"><span class="selo">✦ Cubo</span></span><span class="trofeu" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a2 2 0 0 0 0 .5A3.5 3.5 0 0 0 8.5 10"/><path d="M16 6h3a2 2 0 0 1 0 .5A3.5 3.5 0 0 1 15.5 10"/><path d="M12 13v4"/><path d="M8.5 20h7l-1-3h-5z"/></svg></span><div class="num">04</div><div class="name">Linha editorial</div><div class="hint">Ver oficina</div></button>
+    </div>
+    <!-- Botão de teste do selo do Funil (sai antes de enviar) -->
+    <div class="selo-teste" role="group" aria-label="Selo do funil"><span>Teste do selo</span><button type="button" data-selo="faixa">Faixa</button><button type="button" data-selo="trofeu">Troféu</button></div>
+  </div>
+</section>
+
+<span class="sep">✦</span>
+
+<!-- O FUNIL DA JADE -->
+<section class="wrap" id="funil-jade">
+  <p class="section-label">Na prática</p>
+  <h2 class="section-title">O funil que eu uso <em class="gold-italic">hoje na Caverna</em></h2>
+  <p class="section-sub">Não é teoria: é o caminho que está funcionando no meu próprio negócio.</p>
+  <div class="funil-jade">
+    <div class="fj-passo"><span class="fj-n">1</span><b>Criativo</b><span>O anúncio que alcança a lead</span></div>
+    <div class="fj-seta" aria-hidden="true"></div>
+    <div class="fj-passo"><span class="fj-n">2</span><b>Quiz</b><span>Lapida a cliente</span></div>
+    <div class="fj-seta" aria-hidden="true"></div>
+    <div class="fj-passo"><span class="fj-n">3</span><b>Resultado com vídeo</b><span>Conecta com a lead</span></div>
+    <div class="fj-seta" aria-hidden="true"></div>
+    <div class="fj-caminhos">
+      <div class="fj-passo fj-fim"><b>VSL com checkout</b><span>A compra direto na página</span></div>
+      <div class="fj-ou">ou</div>
+      <div class="fj-passo fj-fim"><b>WhatsApp</b><span>A venda na conversa</span></div>
+    </div>
+  </div>
+</section>
+
+<span class="sep">✦</span>
+
+<!-- POR QUE O CLAUDE: recortes de jornal -->
+<section class="wrap" id="por-que-claude">
+  <p class="section-label">A inteligência por trás do sistema</p>
+  <h2 class="section-title">Por que o <em class="gold-italic">Claude</em></h2>
+  <p class="section-sub">A IA escolhida para organizar o Sistema Elo é uma das mais bem avaliadas do mercado. Não sou eu que digo:</p>
+  <div class="recortes">
+    <a class="recorte r1" href="https://exame.com/tecnologia/examelab/claude-x-chatgpt-qual-usar-para-o-trabalho-em-2026/" target="_blank" rel="noopener">
+      <span class="veiculo">EXAME</span>
+      <span class="data">18 de maio de 2026</span>
+      <span class="manchete">Claude x ChatGPT: qual usar para o trabalho em 2026?</span>
+      <span class="citacao">“O Claude é focado em profundidade analítica e colaboração criativa.”</span>
+      <span class="autor">Marina Semensato · ler a matéria ↗</span>
+    </a>
+    <a class="recorte r2" href="https://olhardigital.com.br/2026/04/10/pro/anthropic-prepara-chegada-ao-brasil-com-foco-em-empresas/" target="_blank" rel="noopener">
+      <span class="veiculo">OLHAR DIGITAL</span>
+      <span class="data">10 de abril de 2026</span>
+      <span class="manchete">Anthropic prepara chegada ao Brasil com foco em empresas</span>
+      <span class="citacao">“O Brasil já é o terceiro maior mercado em uso do Claude.”</span>
+      <span class="autor">Ana Luiza Figueiredo · ler a matéria ↗</span>
+    </a>
+  </div>
+</section>
+
+<span class="sep">✦</span>
+
+<!-- FASE 1 -->
+<section class="fase1">
+  <div class="wrap">
+    <p class="section-label">Fase 1 · Novembro e dezembro de 2026</p>
+    <h2 class="section-title">Estruturação: <em class="gold-italic">construir o sistema</em></h2>
+    <p class="section-sub">Quatro oficinas, uma a cada 15 dias: duas em novembro e duas em dezembro. Em cada uma, vocês me apresentam o que já existe e saímos com aquele setor pronto e guardado no Claude. Todas as oficinas são gravadas e ficam com vocês.</p>
+    <div class="timeline">
+      <div class="card step"><span class="ghost">1</span><div class="when">10 de novembro</div><h4>Oficina de Funil</h4><p>O funil completo, do criativo até a venda.</p></div>
+      <div class="card step"><span class="ghost">2</span><div class="when">24 de novembro</div><h4>Oficina de Produto e Oferta</h4><p>A oferta e os canais de entrega.</p></div>
+      <div class="card step"><span class="ghost">3</span><div class="when">08 de dezembro</div><h4>Oficina Comercial e Onboarding</h4><p>Da conversa no WhatsApp até a aluna chegar segura.</p></div>
+      <div class="card step"><span class="ghost">4</span><div class="when">22 de dezembro</div><h4>Oficina de Linha editorial</h4><p>A comunicação do projeto Elo através da Fabi, que conecta e vende.</p></div>
+    </div>
+    <div class="card result">
+      <span class="ic">✦</span>
+      <p><strong>5 de janeiro de 2027: começa a jornada dos 6 meses, com o tráfego ligado.</strong> Os quatro setores desenhados, a equipe escolhida e tudo guardado no Claude. O funil entra no ar logo depois do Réveillon.</p>
+    </div>
+  </div>
+</section>
+
+<span class="sep">✦</span>
+
+<!-- FASE 2 -->
+<section class="fase2">
+  <div class="wrap">
+    <p class="section-label">Fase 2 · Janeiro a julho de 2027</p>
+    <h2 class="section-title">Gestão: <em class="gold-italic">o sistema rodando</em></h2>
+    <p class="section-sub">A Helen assume o leme, a Fabi brilha no palco e eu, como <span class="ouro-t">mentora estratégica</span>, acompanho todas as pontas, ajusto a rota e dou total suporte ao projeto.</p>
+    <div class="rotina">
+      <div class="card"><div class="tag">Todo dia</div><h4>Grupo no WhatsApp</h4><p>Vocês, a equipe <em class="obs-b">(opcional para começar)</em> e eu. Dúvidas, revisões e decisões no mesmo lugar. O grupo fica aberto todos os dias, sem restrição de horário para envio de mensagens.</p></div>
+      <div class="card"><div class="tag">A cada 2 meses</div><h4>Mentoria de análise e direção</h4><p>Uma mentoria geral do projeto: olhamos funil, vendas e conteúdo juntos e decidimos o próximo passo. Em março, maio e julho de 2027.</p></div>
+      <div class="card"><div class="tag">Sempre</div><h4>O meu olhar</h4><p>Eu não executo no dia a dia, mas nas oficinas faço questão de colocar a mão na massa, com todo carinho e dedicação. Eu analiso, oriento e dou suporte às decisões de vocês.</p></div>
+    </div>
+
+    <div class="sub-secao" id="equipe">
+    <p class="section-label">A equipe sugerida</p>
+    <h2 class="section-title" style="font-size:clamp(28px,4.4vw,42px)">Quem faz <em class="gold-italic">o quê</em></h2>
+    <p class="section-sub">Toque em cada pessoa para ver a função dela.</p>
+
+    <div class="team">
+      <div class="grupo lideres">
+      <div class="grupo-lbl">Equipe de liderança</div>
+      <button class="card person jade" data-modal="p-jade" type="button"><img class="av" src="fotos/jade.jpg" alt=""><span><div class="role">Mentora estratégica</div><div class="who">Jade Torres</div></span></button>
+      <div class="trunk"></div>
+      <div class="row2">
+        <button class="card person" data-modal="p-helen" type="button"><img class="av" src="fotos/helen.jpg" alt=""><span><div class="role">Gestora do projeto</div><div class="who">Helen Varoto</div></span></button>
+        <button class="card person" data-modal="p-fabi" type="button"><img class="av" src="fotos/fabi.jpg" alt=""><span><div class="role">Especialista do palco</div><div class="who">Fabiana Ribas</div></span></button>
+      </div>
+      </div>
+      <div class="trunk"></div>
+      <div class="grupo-lbl">A equipe</div>
+      <div class="row3">
+        <button class="card person" data-modal="p-trafego" type="button"><span class="av vaga">?</span><span><div class="role">Contratar</div><div class="who">Gestor de tráfego</div></span></button>
+        <button class="card person" data-modal="p-social" type="button"><span class="av vaga">?</span><span><div class="role">Contratar</div><div class="who">Social media</div></span></button>
+      </div>
+      <div class="base"><strong>✦ Todos trabalham pelo mesmo objetivo:</strong> consolidar o projeto Elo no digital.</div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<span class="sep">✦</span>
+
+<!-- PRODUTOS DENTRO DA PARCERIA -->
+<section class="wrap" id="produtos">
+  <p class="section-label">Produtos dentro da parceria</p>
+  <h2 class="section-title">O que vocês <em class="gold-italic">recebem</em></h2>
+  <p class="section-sub" style="margin-bottom:14px">A Caverna das Guerreiras tem três caminhos: a Azul constrói o método, a Vermelha ensina o funil de vendas e a Dourada ensina a gerir o negócio.</p>
+  <p class="section-sub">Durante a parceria, vocês têm acesso a estes produtos:</p>
+  <div class="produtos">
+    <figure class="produto" data-produto="oficinas"><img src="fotos/produto-oficinas.jpg" alt="Oficinas Individuais"><figcaption><b>Oficinas Individuais</b>As 4 oficinas de estruturação do projeto e as 3 mentorias de análise e direção.</figcaption></figure>
+    <figure class="produto" data-produto="jade-responde"><img src="fotos/produto-jade-responde.jpg" alt="Jade Responde"><figcaption><b>Jade Responde</b>O grupo no WhatsApp, com a Jade todos os dias.</figcaption></figure>
+    <figure class="produto" data-produto="dourada"><img src="fotos/produto-caverna-dourada.jpg" alt="Caverna Dourada"><figcaption><b>Caverna Dourada</b>A metodologia gravada: aulas específicas na jornada, para acelerar o projeto.</figcaption></figure>
+    <figure class="produto" data-produto="cubo"><img src="fotos/produto-cubo-magico.jpg" alt="Cubo Mágico"><figcaption><b>Cubo Mágico</b>Metodologia de linha editorial, com aplicativo e todo o suporte para a social media.</figcaption></figure>
+  </div>
+</section>
+
+<span class="sep">✦</span>
+
+<section class="wrap" id="cta">
+  <p class="section-label">Tudo claro?</p>
+  <h2 class="section-title">Agora sim, <em class="gold-italic">a proposta</em></h2>
+  <p class="section-sub">Vocês já viram como o projeto Elo vai funcionar e quem faz cada parte. Agora é só ver o investimento e fechar a parceria.</p>
+  <button class="btn" id="ver-proposta" type="button">Visualizar valor da proposta</button>
+</section>
+
+<!-- PROPOSTA -->
+<section class="wrap" id="proposta">
+  <!-- QUEM CONDUZ -->
+  <p class="section-label">Quem conduz o projeto</p>
+  <h2 class="section-title">Uma mentora que <em class="gold-italic">sabe empresariar</em></h2>
+  <div class="card bio">
+    <img class="bio-foto" src="fotos/jade.jpg" alt="Jade Torres">
+    <div class="bio-txt">
+      <h3>Jade Torres</h3>
+      <p class="bio-sub">Mentora estratégica de projetos digitais</p>
+      <p>Antes do digital, a Jade passou mais de 10 anos à frente da sua cozinha industrial, no ramo de alimentação, de 2009 a 2020.</p>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="card stat"><b>+10 anos</b><span>como empresária no ramo alimentício, chegando a um pico de 40 funcionários</span></div>
+    <div class="card stat"><b>13 contratos</b><span>em paralelo, com construtoras de vários estados do Brasil, junto à Vale</span></div>
+    <div class="card stat"><b>R$ 2,5 mi</b><span>de faturamento no ano da ampliação do porto de Ponta da Madeira, no Maranhão</span></div>
+    <div class="card stat"><b>36 mil</b><span>refeições por mês saindo das suas unidades</span></div>
+  </div>
+  <div class="card bio-hoje">
+    <p>Em 2020, a Jade fechou a sua última unidade de alimentação. Em 2021, recomeçou do zero e se reinventou no digital. Em 2023, montou a sua primeira turma de mentoria para mentoras e consolidou o seu propósito no digital, construindo a <span class="ouro">Caverna das Guerreiras</span>. Hoje tem um negócio com previsibilidade de vendas, que não depende do Instagram para faturar, já acompanhou mais de 200 mulheres e segue em busca de superar os próprios marcos do offline.</p>
+    <p>Ajuda mulheres 35+ a transformarem a própria trajetória em uma metodologia que trabalha por elas, com propósitos que viram negócio.</p>
+    <p class="dif"><span>✦</span> “Queimei os barcos no offline <em>para construir a ponte no online.</em>”</p>
+  </div>
+
+  <span class="sep" style="margin:72px auto">✦</span>
+
+  <p class="section-label">Investimento</p>
+  <h2 class="section-title">Proposta de Gestão · <em class="gold-italic">Projeto Elo</em></h2>
+  <p class="section-sub">De novembro de 2026 a julho de 2027: estruturação e 6 meses de gestão.</p>
+
+  <div class="card price-card">
+    <div class="price-head">
+      <div><div class="meta">Fase 1 · Nov e dez/2026</div><h3>Estruturação do sistema</h3></div>
+      <div class="price">R$ 3.000</div>
+    </div>
+    <ul>
+      <li>Tutoriais de configuração da IA Claude, para preparar antes de cada oficina</li>
+      <li>Oficina 1: Funil de vendas <button type="button" class="ouvir-oficina" data-ouvir-setor="funil:3a-funil"><span class="play" aria-hidden="true">▶</span><em>(clique aqui para ouvir os detalhes desta oficina)</em></button></li>
+      <li>Oficina 2: Produto e Oferta <button type="button" class="ouvir-oficina" data-ouvir-setor="produto:3b-produto"><span class="play" aria-hidden="true">▶</span><em>(clique aqui para ouvir os detalhes desta oficina)</em></button></li>
+      <li>Oficina 3: Comercial e Onboarding <button type="button" class="ouvir-oficina" data-ouvir-setor="comercial:3c-comercial"><span class="play" aria-hidden="true">▶</span><em>(clique aqui para ouvir os detalhes desta oficina)</em></button></li>
+      <li>Oficina 4: Linha editorial <button type="button" class="ouvir-oficina" data-ouvir-setor="editorial:3d-editorial"><span class="play" aria-hidden="true">▶</span><em>(clique aqui para ouvir os detalhes desta oficina)</em></button></li>
+      <li>As 4 oficinas gravadas e entregues a vocês</li>
+      <li>Ata e plano de ação após cada oficina</li>
+      <li>Dossiê online do projeto, com todas as gravações, atas e planos reunidos</li>
+      <li>Apoio na escolha do gestor de tráfego <small class="obs">(ou orientação da gestão de tráfego feita no Claude)</small></li>
+      <li>Apoio na escolha da social media <small class="obs">(ou orientação da gestão da produção de conteúdo no Claude)</small></li>
+    </ul>
+  </div>
+
+  <div class="card price-card">
+    <div class="price-head">
+      <div><div class="meta">Fase 2 · Jan a jul/2027</div><h3>Gestão do projeto</h3></div>
+      <div class="price">R$ 9.000</div>
+    </div>
+    <ul>
+      <li>Grupo no WhatsApp ativo todos os dias, com vocês e a equipe</li>
+      <li>Mentoria 1 (março): análise do projeto</li>
+      <li>Mentoria 2 (maio): revisão do projeto</li>
+      <li>Mentoria 3 (julho): análise e ajuste de rota</li>
+      <li>Gravação e ata de cada mentoria, com o direcionamento específico dos pontos que precisam de ajuste</li>
+      <li>Meu olhar e direcionamento sobre funil, tráfego, comercial e conteúdo</li>
+      <li>Bastidores exclusivos e atualização de tudo que eu explorar e validar no mercado</li>
+    </ul>
+  </div>
+
+  <div class="card total">
+    <div class="lbl">Investimento total</div>
+    <div class="val">R$ 12.000</div>
+    <p>Novembro de 2026 a julho de 2027 · Sem comissão sobre as vendas de vocês</p>
+    <div class="pagamento">
+      <div><b>À vista</b>R$ 12.000 no Pix</div>
+      <div><b>Entrada + boleto</b>R$ 4.000 no Pix + 4 boletos de R$ 2.000</div>
+      <div><b>Entrada + cartão</b>R$ 3.000 no Pix + 12x de R$ 1.022,75 <em class="obs-b">(+ taxa da plataforma)</em>, podendo dividir em 2 cartões</div>
+      <div><b>Cartão</b>12x de R$ 1.363,67 <em class="obs-b">(+ taxa da plataforma)</em>, podendo dividir em 2 cartões</div>
+    </div>
+    <p class="validade">Proposta válida por 7 dias, até 30 de outubro de 2026.</p>
+  </div>
+
+  <div class="card fora">
+    <h4>O que fica por conta de vocês</h4>
+    <ul>
+      <li>O investimento em anúncios <small class="obs">(não precisa ser alto: dá para começar com R$ 30 a R$ 60 por dia)</small></li>
+      <li>O gestor de tráfego, contratado direto por vocês <small class="obs">(é possível subir a primeira campanha de teste sem o gestor)</small></li>
+      <li>A social media, contratada direto por vocês <small class="obs">(é possível iniciar as vendas sem uma social media)</small></li>
+      <li>A assinatura do Claude <small class="obs">(plano inicial Pro: cerca de R$ 110 por mês, valor de outubro de 2026)</small></li>
+    </ul>
+  </div>
+
+  <div class="actions">
+    <a class="btn" href="contrato.html">Gerar contrato da parceria</a>
+  </div>
+</section>
+
+<footer>
+  <p class="logo">Caverna das Guerreiras</p>
+  <p>Jade Torres · Proposta preparada para Fabiana Ribas e Helen Varoto</p>
+</footer>
+
+<!-- Barra da leitura em voz alta -->
+<div class="player" id="player" role="group" aria-label="Leitura em voz alta">
+  <span>Ouvindo a Jade</span>
+  <button type="button" id="p-vel">1.25x</button>
+  <button type="button" id="p-pausa">⏸ Pausar</button>
+  <button type="button" id="p-parar">■ Parar</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <button class="x" type="button" aria-label="Fechar">×</button>
+    <div id="m-body"></div>
+  </div>
+</div>
+
+<script>
+  const TROFEU = document.querySelector('.trofeu').innerHTML;
+  const conteudo = {
+    claude: {
+      label: 'Setores do projeto', title: 'Sistema Elo', sub: 'Onde tudo fica guardado e conectado',
+      blocos: [
+        ['O que é', ['O sistema de gestão do Elo, montado com a IA do Claude', 'Guarda o método, a oferta, o jeito de falar da Fabi e as decisões de vocês', 'Cada pessoa da equipe consulta o mesmo lugar']],
+        ['Por que importa', ['Ninguém leva o conhecimento embora quando sai', 'Vocês deixam de depender de uma agência para entender o próprio negócio']]
+      ]
+    },
+    produto: {
+      label: 'Oficina 02 · 24 de novembro', title: 'Produto e Oferta', sub: 'O que nasce do método e sustenta o negócio',
+      oficina: 'Oficina de estruturação do produto e da oferta com Jade Torres, Helen Varoto e Fabiana Ribas.',
+      blocos: [
+        ['O que preparar antes da Oficina de Produto e Oferta', ['Alimentar a IA Claude com todas as informações do método, usando o tutorial de configuração da Jade <small class="nota">Entregue assim que a parceria for firmada.</small>']],
+        ['O que vamos resolver juntas na Oficina de Produto e Oferta', ['A oferta do programa Elo e o valor certo para ela', 'Os canais de entrega: plataforma, grupo, encontros e suporte', 'A oferta e a entrega registradas na IA Claude']]
+      ],
+      claude: 'Guarda o método, a oferta e as aulas, e ajuda a ajustar o produto, a oferta e a entrega sempre que precisar.',
+      kit: {
+        titulo: 'Todos os prompts de produto e oferta validados da Jade',
+        nota: 'Os que já existem e todos os que forem criados durante a parceria.',
+        intro: 'Tudo que eu uso no Claude, entregue mastigado e pronto para vocês copiarem:',
+        itens: [
+          'Prompt para desenhar o ecossistema de produtos do método',
+          'Prompt para desenhar a oferta ancorada',
+          'Prompt para desenhar a jornada do produto',
+          'Prompt para criar uma apresentação de oferta navegável',
+          'Prompt para criar uma proposta comercial com link'
+        ]
+      }
+    },
+    funil: {
+      label: 'Oficina 01 · 10 de novembro', title: 'Funil de vendas', sub: 'A porta do negócio sempre aberta',
+      oficina: 'Oficina de estruturação do funil de vendas com as estrategistas do projeto: Jade Torres e Helen Varoto (gestor de tráfego: opcional).',
+      blocos: [
+        ['O que preparar antes da Oficina de Funil', ['Configurar a IA Claude usando o tutorial de configuração da Jade <small class="nota">Entregue assim que a parceria for firmada.</small>']],
+        ['O que vamos resolver juntas na Oficina de Funil', ['O desenho completo do funil de vendas, do criativo que alcança a lead até a venda, adaptado ao perfil do projeto', 'A configuração do funil na IA Claude', 'Todas as frentes do funil iniciadas para a produção (criativos, páginas...)']]
+      ],
+      claude: 'É a inteligência que deixa toda a construção do funil prática e de extrema qualidade, cruzando tudo o que foi conversado no projeto.',
+      kit: {
+        titulo: 'Todos os prompts dos funis validados da Jade',
+        nota: 'Os que já existem e todos os que forem criados durante a parceria.',
+        intro: 'Tudo que eu uso no Claude, entregue mastigado e pronto para vocês copiarem:',
+        itens: [
+          'Prompt para criar o roteiro escrito da página de vendas',
+          'Prompt para o design da página de vendas',
+          'Prompt para o design da página de captação',
+          'Prompt para o design da página de quiz',
+          'Prompt para o roteiro do vídeo de captação',
+          'Prompt para o roteiro do vídeo de apresentação do método'
+        ]
+      }
+    },
+    comercial: {
+      label: 'Oficina 03 · 08 de dezembro', title: 'Comercial e Onboarding', sub: 'Onde a lead vira aluna',
+      oficina: 'Oficina de estruturação do comercial e do onboarding com as estrategistas do projeto: Jade Torres e Helen Varoto.',
+      blocos: [
+        ['O que preparar antes da Oficina Comercial e Onboarding', ['Reunir na IA Claude todas as informações de vendas e de onboarding que já aconteceram, usando o tutorial de configuração da Jade <small class="nota">Entregue assim que a parceria for firmada.</small>']],
+        ['O que vamos resolver juntas na Oficina Comercial e Onboarding', ['O passo a passo da conversa no WhatsApp, que qualquer pessoa da equipe consegue seguir', 'O follow-up, para nenhuma lead se perder', 'O destino da lead que não fechou a compra de imediato', 'O onboarding da aluna, do pagamento à primeira aula, para ela chegar segura', 'O processo comercial e o onboarding registrados na IA Claude']]
+      ],
+      claude: 'Escreve as mensagens, os follow-ups e as respostas às objeções, organiza as leads e ajuda a montar o onboarding da aluna.',
+      kit: {
+        titulo: 'Todos os prompts de comercial e onboarding validados da Jade',
+        nota: 'Os que já existem e todos os que forem criados durante a parceria.',
+        intro: 'Tudo que eu uso no Claude, entregue mastigado e pronto para vocês copiarem:',
+        itens: [
+          'Prompt para criar o roteiro de condução de vendas pelo WhatsApp (abordagem e follow-up)',
+          'Prompt para criar no Claude um CRM que administra as leads',
+          'Tutorial para a criação de um agente de IA que responde no WhatsApp (opcional)',
+          'Prompt para desenhar o onboarding da aluna'
+        ]
+      }
+    },
+    editorial: {
+      label: 'Oficina 04 · 22 de dezembro', title: 'Linha editorial', sub: 'O conteúdo que conversa com o funil',
+      oficina: 'Oficina de estruturação da linha editorial com Jade Torres e Fabiana Ribas.',
+      blocos: [
+        ['O que preparar antes da Oficina de Linha editorial', ['Preencher a Fase 1 do App do Cubo Mágico usando o tutorial da Jade, alimentando a IA Claude <small class="nota">Acesso ao app e ao tutorial entregue assim que a parceria for firmada.</small>']],
+        ['O que vamos resolver juntas na Oficina de Linha editorial', ['A linha editorial da Fabi para todos os níveis de consciência', 'Conteúdos que levam a seguidora até a oferta do funil', 'Quem grava, quem edita e quem posta', 'Uma rotina de conteúdo clara para a Fabi e a social media', 'A linha editorial registrada na IA Claude']]
+      ],
+      claude: 'Administra toda a produção e a distribuição de conteúdo, seguindo a metodologia do Cubo Mágico.',
+      kit: {
+        titulo: 'Método Cubo Mágico + App do Cubo Mágico',
+        intro: 'Método autoral da Jade, baseado no seu método de planejamento de cardápio e nos níveis de consciência de Eugene Schwartz, um dos maiores copywriters dos últimos tempos.',
+        itens: [
+          'Acesso ao App do Cubo Mágico para planejar a linha editorial',
+          'Preenchimento do App do Cubo Mágico junto com a Fabi e a social media (opcional)',
+          'Todos os prompts para produção de conteúdo, liberados dentro do app',
+          'Skill do Cubo Mágico para usar no Claude'
+        ]
+      }
+    },
+    'p-jade': {
+      label: 'Mentora estratégica', title: 'Jade Torres', sub: 'O olhar de negócio sobre todas as pontas',
+      blocos: [['A função', ['Conduz as 4 oficinas da estruturação', 'Acompanha o grupo e conduz as mentorias de análise a cada 2 meses', 'Faz a ponte com o gestor de tráfego e a social media', 'Não executa: analisa, orienta e ajusta a rota']]]
+    },
+    'p-helen': {
+      label: 'Gestora do projeto', title: 'Helen Varoto', sub: 'A mão na massa do dia a dia',
+      blocos: [['A função', ['É a ponte principal com a Jade', 'Acompanha a equipe e os números', 'Decide junto com a Fabi os próximos passos']]],
+      claude: 'Usa o Claude para entender os relatórios, organizar a rotina e tomar decisões com mais clareza.'
+    },
+    'p-fabi': {
+      label: 'Especialista do palco', title: 'Fabiana Ribas', sub: 'O palco e a entrega do método',
+      blocos: [['A função', ['Grava os vídeos e é o rosto do Elo', 'Conduz as aulas e a supervisão com as alunas', 'Dá a opinião certeira nas decisões do negócio']]],
+      claude: 'Recebe roteiros prontos no jeito dela de falar, para só gravar.'
+    },
+    'p-trafego': {
+      label: 'Contratar', title: 'Gestor de tráfego', sub: 'A ponta que traz as leads',
+      blocos: [['A função', ['Roda os anúncios do funil', 'Testa criativos e ajusta o investimento', 'Explica toda semana o que está funcionando']]],
+      claude: 'Consulta o projeto para entender a oferta e a linguagem do Elo.'
+    },
+    'p-social': {
+      label: 'Contratar', title: 'Social media', sub: 'O perfil sempre pronto',
+      blocos: [['A função', ['Edita, organiza e posta o conteúdo', 'Segue a linha editorial definida na oficina', 'Mantém o perfil alinhado com a oferta do funil']]],
+      claude: 'Recebe do Claude roteiros, legendas e carrosséis prontos para produzir.'
+    }
+  };
+
+  const bg = document.getElementById('modal-bg');
+  const body = document.getElementById('m-body');
+  let ultimo = null;
+
+  function abrir(chave, origem) {
+    const c = conteudo[chave];
+    if (!c) return;
+    ultimo = origem;
+    let html = `<div class="m-label">${c.label}</div><h3 id="m-title">${c.title}</h3><div class="m-sub">${c.sub}</div>`;
+    if (c.oficina) html += `<div class="oficina-box">${c.oficina}</div>`;
+    c.blocos.forEach(([t, itens]) => {
+      html += `<h5>${t}</h5><ul>${itens.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    });
+    if (c.claude) html += `<div class="claude-box"><b>✦ O papel do Claude:</b> ${c.claude}</div>`;
+    if (c.kit) html += `<div class="kit-box"><span class="kit-selo">${TROFEU} Exclusivo</span><h6>${c.kit.titulo}</h6>${c.kit.nota ? `<p class="kit-nota">${c.kit.nota}</p>` : ''}<p>${c.kit.intro}</p><ul>${c.kit.itens.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
+    body.innerHTML = html;
+    bg.classList.add('open');
+    bg.setAttribute('aria-hidden', 'false');
+    bg.querySelector('.x').focus();
+  }
+  function fechar() {
+    bg.classList.remove('open');
+    bg.setAttribute('aria-hidden', 'true');
+    if (ultimo) ultimo.focus();
+  }
+  document.querySelectorAll('[data-modal]').forEach(el => el.addEventListener('click', () => abrir(el.dataset.modal, el)));
+  bg.addEventListener('click', e => { if (e.target === bg || e.target.classList.contains('x')) fechar(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && bg.classList.contains('open')) fechar(); });
+
+  // Cores: versão Fabi escolhida (a versão Caverna continua guardada no CSS)
+  document.documentElement.dataset.tema = 'fabi';
+
+  // Teste de tamanho: abre a própria página numa moldura de celular ou tablet
+  const telaBg = document.getElementById('tela-bg');
+  const telaFrame = document.getElementById('tela-frame');
+  const dentroDaMoldura = new URLSearchParams(location.search).has('moldura');
+  if (dentroDaMoldura) document.querySelector('.tema').remove();
+  document.querySelectorAll('.tema button').forEach(b => b.addEventListener('click', () => {
+    const w = +b.dataset.tela;
+    document.getElementById('tela-moldura').style.width = (w + 24) + 'px';
+    telaFrame.style.width = w + 'px';
+    telaFrame.src = location.pathname + '?moldura=1';
+    telaBg.classList.add('open');
+    document.querySelectorAll('.tema button').forEach(x => x.classList.toggle('on', x === b));
+  }));
+  document.getElementById('tela-fechar').addEventListener('click', () => {
+    telaBg.classList.remove('open');
+    telaFrame.src = 'about:blank';
+    document.querySelectorAll('.tema button').forEach(x => x.classList.remove('on'));
+  });
+
+  function selo(nome) {
+    document.documentElement.dataset.selo = nome;
+    document.querySelectorAll('.selo-teste button').forEach(b => b.classList.toggle('on', b.dataset.selo === nome));
+  }
+  document.querySelectorAll('.selo-teste button').forEach(b => b.addEventListener('click', () => selo(b.dataset.selo)));
+  selo('trofeu');
+
+  function titulo(t) {
+    document.documentElement.dataset.tit = t;
+    document.querySelectorAll('.tit-teste button').forEach(b => b.classList.toggle('on', b.dataset.tit === t));
+  }
+  document.querySelectorAll('.tit-teste button').forEach(b => b.addEventListener('click', () => titulo(b.dataset.tit)));
+  titulo('b');
+
+
+  // Áudios gravados pela Jade: cada botão toca a sua seção e segue para as próximas
+  (function () {
+    const player = document.getElementById('player');
+    const btPausa = document.getElementById('p-pausa');
+    const btVel = document.getElementById('p-vel');
+    const partes = [
+      ['header.hero', '1-abertura'],
+      ['#diferenca', '2-diferenca'],
+      ['#estrutura', '3-estrutura'],
+      ['#por-que-claude', '4-claude'],
+      ['.fase1', '5-estruturacao'],
+      ['.fase2', '6-gestao'],
+      ['#equipe', '7-equipe'],
+      ['#produtos', '8-recebem'],
+      ['#cta', '9-tudo-claro']
+    ].map(([sel, arq]) => ({ el: document.querySelector(sel), arq }));
+    // Troque a versão sempre que algum áudio for editado, para o navegador não tocar a cópia antiga
+    const VERSAO = '?v=20261023-4';
+    const audio = new Audio();
+    audio.preload = 'auto';
+    const proximo = new Audio(); proximo.preload = 'auto';
+    let pos = -1, vel = 1.25;
+    const velocidades = [1, 1.25, 1.5];
+    player.audio = audio;
+
+    function marcar(el) {
+      document.querySelectorAll('.lendo').forEach(x => x.classList.remove('lendo'));
+      if (el) { el.classList.add('lendo'); el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+    }
+    function parar() {
+      const tinhaSetor = setorAberto; setorAberto = false;
+      if (tinhaSetor && bg.classList.contains('open')) fecharJanela();
+      audio.pause(); audio.removeAttribute('src'); pos = -1; marcar(null);
+      player.classList.remove('on'); btPausa.textContent = '⏸ Pausar';
+    }
+    function tocar(i) {
+      if (i >= partes.length) { parar(); return; }
+      if (setorAberto) { setorAberto = false; fecharJanela(); }
+      pos = i;
+      audio.src = 'audios/' + partes[i].arq + '.mp3' + VERSAO;
+      audio.playbackRate = vel;
+      audio.play().catch(() => {});
+      // Já carrega o áudio seguinte, para a passagem não travar
+      if (partes[i + 1]) proximo.src = 'audios/' + partes[i + 1].arq + '.mp3' + VERSAO;
+      marcar(partes[i].el.querySelector('.ouvir') || partes[i].el);
+      player.classList.add('on'); btPausa.textContent = '⏸ Pausar';
+    }
+    // Ao terminar uma seção, toca a próxima automaticamente até o fim
+    let avancou = false;
+    function proxima() {
+      if (avancou) return; avancou = true;
+      if (setorAberto) { setorAberto = false; audio.pause(); player.classList.remove('on'); return; }  // áudio de uma oficina: toca só ele e deixa a janelinha aberta
+      if (pos >= 0) tocar(pos + 1);
+    }
+    audio.addEventListener('ended', proxima);
+    // Reserva: alguns celulares não avisam o fim; passa adiante quando chega nos últimos instantes
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration && audio.currentTime >= audio.duration - 0.3) proxima();
+    });
+    audio.addEventListener('playing', () => { avancou = false; });
+
+    // Na proposta de valor: o botão de cada oficina abre a janelinha dela já tocando o áudio
+    let setorAberto = false;
+    const fecharJanela = fechar;
+    fechar = function () { fecharJanela(); if (setorAberto) parar(); };
+    document.querySelectorAll('[data-ouvir-setor]').forEach(b => b.addEventListener('click', () => {
+      const [chave, arq] = b.dataset.ouvirSetor.split(':');
+      if (pos >= 0 || setorAberto) parar();
+      abrir(chave, b);
+      setorAberto = true; avancou = false; pos = -1;
+      audio.src = 'audios/' + arq + '.mp3' + VERSAO;
+      audio.playbackRate = vel;
+      audio.play().catch(() => {});
+      player.classList.add('on'); btPausa.textContent = '⏸ Pausar';
+    }));
+    audio.addEventListener('loadedmetadata', () => { audio.playbackRate = vel; });
+
+    // No áudio 8, cada produto ganha um brilho dourado enquanto a Jade fala dele
+    const destaques = { '8-recebem': [[0, null], [24.5, 'oficinas'], [32.0, 'jade-responde'], [36.1, 'dourada'], [51.1, 'cubo']] };
+    let produtoAtual = null;
+    function brilhar(k) {
+      if (k === produtoAtual) return;
+      produtoAtual = k;
+      document.querySelectorAll('.produto.brilha').forEach(x => x.classList.remove('brilha'));
+      const el = k && document.querySelector(`[data-produto="${k}"]`);
+      if (el) { el.classList.add('brilha'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    }
+    audio.addEventListener('timeupdate', () => {
+      const d = pos >= 0 && destaques[partes[pos].arq];
+      if (!d) { if (produtoAtual) brilhar(null); return; }
+      let k = null;
+      for (const [t, c] of d) if (audio.currentTime >= t) k = c;
+      brilhar(k);
+    });
+    audio.addEventListener('ended', () => brilhar(null));
+
+    // No áudio 9, quando a Jade diz "agora é só ver o investimento", o botão começa a pulsar em dourado
+    const btProposta = document.getElementById('ver-proposta');
+    audio.addEventListener('timeupdate', () => {
+      if (pos >= 0 && partes[pos].arq === '9-tudo-claro' && audio.currentTime >= 15.7 && !btProposta.dataset.clicado) {
+        btProposta.classList.add('chamando');
+      }
+    });
+    btProposta.addEventListener('click', () => { btProposta.dataset.clicado = '1'; btProposta.classList.remove('chamando'); });
+
+    partes.forEach((p, i) => {
+      if (!p.el) return;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'ouvir'; b.textContent = '▶ Clique para ouvir esta seção';
+      b.addEventListener('click', () => tocar(i));
+      p.el.insertBefore(b, p.el.firstElementChild);
+    });
+
+    btPausa.addEventListener('click', () => {
+      if (audio.paused) { audio.play(); btPausa.textContent = '⏸ Pausar'; }
+      else { audio.pause(); btPausa.textContent = '▶ Continuar'; }
+    });
+    document.getElementById('p-parar').addEventListener('click', parar);
+    btVel.addEventListener('click', () => {
+      vel = velocidades[(velocidades.indexOf(vel) + 1) % velocidades.length];
+      audio.playbackRate = vel; btVel.textContent = vel + 'x';
+    });
+  })();
+
+  document.getElementById('ver-proposta').addEventListener('click', () => {
+    const p = document.getElementById('proposta');
+    p.classList.add('open');
+    p.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>

@@ -268,6 +268,8 @@
   .price-head h3 { font-family: var(--font-display); font-size: 26px; font-weight: 600; }
   .price-head .meta { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
   .price { font-family: var(--font-display); font-size: 40px; color: var(--gold-light); font-weight: 600; white-space: nowrap; }
+  .price-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(201,168,76,0.2); }
+  .price-foot span { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
   .price-card ul { list-style: none; font-size: 14px; color: var(--white-dim); }
   .price-card li { padding: 6px 0 6px 20px; position: relative; }
   .price-card li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: 10px; top: 10px; }
@@ -592,7 +594,6 @@
   <div class="card price-card">
     <div class="price-head">
       <div><div class="meta">Fase 1 · Nov e dez/2026</div><h3>Estruturação do sistema</h3></div>
-      <div class="price">R$ 3.000</div>
     </div>
     <ul>
       <li>Tutoriais de configuração da IA Claude, para preparar antes de cada oficina</li>
@@ -606,12 +607,12 @@
       <li>Apoio na escolha do gestor de tráfego <small class="obs">(ou orientação da gestão de tráfego feita no Claude)</small></li>
       <li>Apoio na escolha da social media <small class="obs">(ou orientação da gestão da produção de conteúdo no Claude)</small></li>
     </ul>
+    <div class="price-foot"><span>Investimento desta fase</span><div class="price">R$ 3.000</div></div>
   </div>
 
   <div class="card price-card">
     <div class="price-head">
       <div><div class="meta">Fase 2 · Jan a jul/2027</div><h3>Gestão do projeto</h3></div>
-      <div class="price">R$ 9.000</div>
     </div>
     <ul>
       <li>Grupo no WhatsApp ativo todos os dias, com vocês e a equipe</li>
@@ -622,6 +623,7 @@
       <li>Meu olhar e direcionamento sobre funil, tráfego, comercial e conteúdo</li>
       <li>Bastidores exclusivos e atualização de tudo que eu explorar e validar no mercado</li>
     </ul>
+    <div class="price-foot"><span>Investimento desta fase</span><div class="price">R$ 9.000</div></div>
   </div>
 
   <div class="card total">

@@ -143,6 +143,8 @@
   .produtos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; text-align: left; }
   .produto { margin: 0; border-radius: 12px; transition: transform .3s; }
   .produto.brilha { transform: scale(1.03); }
+  .raio { border-radius: 12px; animation: raio 1.6s ease-in-out infinite; }
+  @keyframes raio { 0%, 100% { box-shadow: 0 0 0 2px rgba(232,201,106,0.9), 0 0 18px rgba(232,201,106,0.35); } 50% { box-shadow: 0 0 0 3px var(--gold-light), 0 0 36px rgba(232,201,106,0.7); } }
   .produto.brilha img { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold), 0 0 28px rgba(232,201,106,0.55); animation: brilho 1.6s ease-in-out infinite; }
   @keyframes brilho { 50% { box-shadow: 0 0 0 2px var(--gold-light), 0 0 40px rgba(232,201,106,0.8); } }
   .produto img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 10px; border: 1px solid rgba(201,168,76,0.3); }
@@ -879,7 +881,7 @@
     function parar() {
       const tinhaSetor = setorAberto; setorAberto = false;
       if (tinhaSetor && bg.classList.contains('open')) fecharJanela();
-      audio.pause(); audio.removeAttribute('src'); pos = -1; marcar(null);
+      audio.pause(); audio.removeAttribute('src'); pos = -1; marcar(null); brilhar(null);
       player.classList.remove('on'); btPausa.textContent = '⏸ Pausar';
     }
     function tocar(i) {
@@ -924,24 +926,33 @@
     }));
     audio.addEventListener('loadedmetadata', () => { audio.playbackRate = vel; });
 
-    // No áudio 8, cada produto ganha um brilho dourado enquanto a Jade fala dele
-    const destaques = { '8-recebem': [[0, null], [24.5, 'oficinas'], [32.0, 'jade-responde'], [36.1, 'dourada'], [51.1, 'cubo']] };
-    let produtoAtual = null;
-    function brilhar(k) {
-      if (k === produtoAtual) return;
-      produtoAtual = k;
-      document.querySelectorAll('.produto.brilha').forEach(x => x.classList.remove('brilha'));
-      const el = k && document.querySelector(`[data-produto="${k}"]`);
-      if (el) { el.classList.add('brilha'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    // Raio dourado: destaca e mostra na tela o que a Jade está falando em cada momento do áudio
+    const raios = {
+      '2-diferenca':    [[0, '#diferenca .section-title'], [9.8, '.compare .agencia'], [36.6, '.compare .nosso']],
+      '3-estrutura':    [[0, '#estrutura .section-title'], [3.2, '#estrutura .section-sub'], [17.6, '#estrutura .sectors']],
+      '4-claude':       [[0, '#por-que-claude .section-title'], [10.7, '.recorte.r1'], [27.9, '.recorte.r2'], [35.7, '#por-que-claude .section-sub']],
+      '5-estruturacao': [[0, '.fase1 .section-title'], [11.1, '.fase1 .section-sub'], [31.8, '.fase1 .step:nth-child(1)'], [38.0, '.fase1 .step:nth-child(2)'], [43.8, '.fase1 .step:nth-child(3)'], [50.9, '.fase1 .step:nth-child(4)'], [59.4, '.fase1 .result']],
+      '6-gestao':       [[0, '.fase2 .section-title'], [12.9, '.fase2 .section-sub'], [23.4, '.rotina .card:nth-child(1)'], [39.9, '.rotina .card:nth-child(2)'], [61.6, '.rotina .card:nth-child(3)']],
+      '7-equipe':       [[0, '#equipe .section-title'], [11.2, '.person.jade'], [16.2, '[data-modal="p-helen"]'], [18.6, '[data-modal="p-fabi"]'], [21.4, '#equipe .row3'], [26.7, '#equipe .base']],
+      '8-recebem':      [[0, '#produtos .section-title'], [24.5, '[data-produto="oficinas"]'], [32.0, '[data-produto="jade-responde"]'], [36.1, '[data-produto="dourada"]'], [51.1, '[data-produto="cubo"]']]
+    };
+    let raioAtual = null;
+    function brilhar(sel) {
+      if (sel === raioAtual) return;
+      raioAtual = sel;
+      document.querySelectorAll('.raio, .produto.brilha').forEach(x => x.classList.remove('raio', 'brilha'));
+      const el = sel && document.querySelector(sel);
+      if (!el) return;
+      el.classList.add(el.classList.contains('produto') ? 'brilha' : 'raio');
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
     audio.addEventListener('timeupdate', () => {
-      const d = pos >= 0 && destaques[partes[pos].arq];
-      if (!d) { if (produtoAtual) brilhar(null); return; }
-      let k = null;
-      for (const [t, c] of d) if (audio.currentTime >= t) k = c;
-      brilhar(k);
+      const r = pos >= 0 && raios[partes[pos].arq];
+      if (!r) { if (raioAtual) brilhar(null); return; }
+      let sel = null;
+      for (const [t, k] of r) if (audio.currentTime >= t) sel = k;
+      brilhar(sel);
     });
-    audio.addEventListener('ended', () => brilhar(null));
 
     // No áudio 9, quando a Jade diz "agora é só ver o investimento", o botão começa a pulsar em dourado
     const btProposta = document.getElementById('ver-proposta');
